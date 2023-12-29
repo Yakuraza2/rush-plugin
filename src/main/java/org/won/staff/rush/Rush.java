@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.won.staff.rush.listeners.PlayingListener;
 import org.won.staff.rush.listeners.RushListener;
 import org.won.staff.rush.listeners.cache;
+import org.won.staff.rush.timers.AutoFinish;
 import org.won.staff.rush.timers.AutoStart;
 
 import java.io.File;
@@ -140,7 +141,7 @@ public class Rush extends JavaPlugin {
     }
 
     public void spawnPlayer(Player player){
-        if(player.getGameMode() != GameMode.ADVENTURE) player.setGameMode(GameMode.ADVENTURE);
+        if(player.getGameMode() != GameMode.SURVIVAL) player.setGameMode(GameMode.SURVIVAL);
 
         debug("Spawn de " + player.getName() + "...");
         player.setHealth(20);
@@ -175,5 +176,19 @@ public class Rush extends JavaPlugin {
 
     public String prefix(){
         return this.getConfig().getString("messages.prefix") + " ";
+    }
+
+    public String getConfigMessage(String path, Player player){
+        String message = "";
+
+        if(path.equalsIgnoreCase("yellow-team") || path.equalsIgnoreCase("purple-team")){
+            message = getConfig().getString("messages." + path);
+        }else{message = prefix() + getConfig().getString("messages." + path);}
+
+        if(player != null) message = message.replaceAll("<player>", player.getName());
+        message = message.replaceAll("<time>", AutoStart.getTime() + AutoFinish.getTime() + "");
+        message = message.replaceAll("<slots>", cache.slots() + "");
+        message = message.replaceAll("<onlines>", getPlayers().size() + "");
+        return message;
     }
 }

@@ -30,9 +30,17 @@ public class PlayingListener implements Listener {
     public void onDamage(EntityDamageEvent e){
         if(e.getEntity() instanceof Player){
             Player player = (Player) e.getEntity();
+            main.debug("Damage détéctés sur " + player.getName());
+
+            if(!main.isState(GState.PLAYING) && main.getPlayers().contains(player)){
+                e.setCancelled(true);
+                return;
+            }
+
             if(player.getHealth()<=e.getDamage()){
+                main.debug("Mort de " + player.getName() + " d'origine inconnue");
                 e.setDamage(0);
-                Bukkit.broadcastMessage(player.getName() + " est mort !");
+                Bukkit.broadcastMessage(main.getConfigMessage("death", player));
                 killPlayer(player);
             }
         }
@@ -40,27 +48,40 @@ public class PlayingListener implements Listener {
     @EventHandler
     public void onPvp(EntityDamageByEntityEvent e){
         Entity damaged = e.getEntity();
-        if(!(damaged instanceof Player)) return;
-        Player victim = (Player) damaged;
+        if(damaged instanceof Player) {
+            Player victim = (Player) damaged;
 
-        Entity damager = e.getDamager();
-        Player killer = victim;
+            Entity damager = e.getDamager();
+            Player killer = victim;
 
-        if(victim.getHealth()<=e.getDamage()){
+            main.debug("PVP détéctés sur " + victim.getName());
 
-            if(victim.getKiller() instanceof Player) {killer = (Player)damager;}
-            if(victim.getKiller() instanceof Arrow) {
-                Arrow arrow = (Arrow) damager;
-                if(arrow.getShooter() instanceof Player){
-                    killer= ((Player) arrow.getShooter());
+            if (victim.getHealth() <= e.getDamage()) {
+
+                main.debug("Mort par PVP détéctés sur " + victim.getName());
+                if (damager instanceof Player) {
+                    killer = (Player) damager;
                 }
-            }
+                if (damager instanceof Arrow) {
+                    Arrow arrow = (Arrow) damager;
+                    if (arrow.getShooter() instanceof Player) {
+                        killer = ((Player) arrow.getShooter());
+                    }
+                }
+                if(!(main.isState(GState.PLAYING) && main.getPlayers().contains(killer))){
+                    e.setCancelled(true);
+                    killer.sendMessage(main.getConfigMessage("no-pvp", killer));
+                    return;
+                }
 
-            killer.sendMessage(ChatColor.YELLOW + "Tu viens de tuer " + victim.getName());
-            killer.playSound(killer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 2, 1);
-            Bukkit.broadcastMessage(victim.getName() + " a été tué par " + killer.getName());
-            e.setDamage(0);
-            killPlayer(victim);
+                main.debug("Le tueur de " + victim.getName() + " est : " + killer.getName());
+
+                killer.sendMessage(main.getConfigMessage("killer-message", victim));
+                killer.playSound(killer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 2, 1);
+                Bukkit.broadcastMessage(main.getConfigMessage("killed-by-player", victim).replaceAll("<killer>", killer.getName()));
+                e.setDamage(0);
+                killPlayer(victim);
+            }
         }
 
 
@@ -70,28 +91,32 @@ public class PlayingListener implements Listener {
     public void onBreak(BlockBreakEvent e){
         Player player = e.getPlayer();
 
-        if(!main.isState(GState.PLAYING) || !main.getPlayers().contains(player)) return;
+        if(!(main.isState(GState.PLAYING) && main.getPlayers().contains(player)) && !player.hasPermission("rush.admin")) {
+            player.sendMessage(main.getConfigMessage("no-break", player));
+            e.setCancelled(true);
+            return;
+        }
         if(e.getBlock().getBlockData().getMaterial() == YELLOW_BED){
             if(main.jaune().contains(player)){
                 e.setCancelled(true);
-                player.sendMessage("Vous ne pouvez pas détruire votre lit !");
+                player.sendMessage(main.getConfigMessage("ally-bed-destroy", player));
                 return;
             }else {
                 main.setYellowBedAlive(false);
                 main.debug(player.getName() + " a détruit le lit JAUNE");
-                Bukkit.broadcastMessage(player.getName() + " a détruit le lit " + ChatColor.YELLOW + "jaune !");
+                Bukkit.broadcastMessage(main.getConfigMessage("bed-destroy", player).replaceAll("<bed>",   ChatColor.YELLOW + "jaune"));
             }
         }else if(e.getBlock().getBlockData().getMaterial() == PURPLE_BED){
             if(main.violet().contains(player)){
                 e.setCancelled(true);
-                player.sendMessage("Vous ne pouvez pas détruire votre lit !");
+                player.sendMessage(main.getConfigMessage("ally-bed-destroy", player));
                 return;
             } else {
                 main.setPurpleBedAlive(false);
                 main.debug(player.getName() + " a détruit le lit VIOLET");
-                Bukkit.broadcastMessage(player.getName() + " a détruit le lit " + ChatColor.LIGHT_PURPLE + "violet !");
+                Bukkit.broadcastMessage(main.getConfigMessage("bed-destroy", player).replaceAll("<bed>",   ChatColor.LIGHT_PURPLE + "violet"));
             }
-        }
+        }else{return;}
 
         for(Player joueurs : main.getPlayers()){
             joueurs.playSound(player, Sound.BLOCK_NOTE_BLOCK_IMITATE_ENDER_DRAGON, 1, 1);
@@ -100,6 +125,8 @@ public class PlayingListener implements Listener {
 
     //CREER UN KILLPLAYER -> Si le lit est détruit : eliminer le joueur, sinon, le faire respawn + clear + heal etc.
     public static void killPlayer(Player player){
+        main.debug("Le joueur " + player.getName() + " est mort.");
+
         if(main.jaune().contains(player)){
             if(main.isYellowBedAlive()){
                 main.debug("L'équipe jaune a encore son lit, " + player.getName() + " peut respawn !");
@@ -139,38 +166,29 @@ public class PlayingListener implements Listener {
             Player winner = main.getPlayers().get(0);
 
             if(main.jaune().contains(winner)){
-                Bukkit.broadcastMessage("Bravo à l'équipe " + ChatColor.YELLOW + "JAUNE" + ChatColor.RESET + " qui gagne le Rush !");
+                Bukkit.broadcastMessage(main.getConfigMessage("winning-solo-broadcast", winner).replaceAll("<team>", main.getConfigMessage("yellow-team",null)));
             }else{
-                Bukkit.broadcastMessage("Bravo à l'équipe " + ChatColor.LIGHT_PURPLE + "VIOLETE" + ChatColor.RESET + " qui gagne le Rush !");
+                Bukkit.broadcastMessage(main.getConfigMessage("winning-solo-broadcast", winner).replaceAll("<team>", main.getConfigMessage("yellow-team",null)));
             }
-
-            winner.setGameMode(GameMode.SPECTATOR);
-            main.setState(GState.FINISH);
-
-            finish.runTaskTimer(main, 0, 20);
         }
+
         else if(main.getPlayers().size()==2){
             Player winner = main.getPlayers().get(0);
             Player winner2 = main.getPlayers().get(1);
 
             if(main.jaune().contains(winner) && main.jaune().contains(winner2)){
-                Bukkit.broadcastMessage("Bravo à l'équipe " + ChatColor.YELLOW + "JAUNE" + ChatColor.RESET + " qui gagne le Rush !");
+                Bukkit.broadcastMessage(main.getConfigMessage("winning-broadcast", winner).replaceAll("<team>", main.getConfigMessage("yellow-team",null)));
             }else if(main.violet().contains(winner) && main.violet().contains(winner2)){
-                Bukkit.broadcastMessage("Bravo à l'équipe " + ChatColor.LIGHT_PURPLE + "VIOLETE" + ChatColor.RESET + " qui gagne le Rush !");
+                Bukkit.broadcastMessage(main.getConfigMessage("winning-broadcast", winner).replaceAll("<team>", main.getConfigMessage("yellow-team",null)));
             }else {return;}
-            winner.setGameMode(GameMode.SPECTATOR);
-            winner2.setGameMode(GameMode.SPECTATOR);
-            main.setState(GState.FINISH);
 
-            finish.runTaskTimer(main, 0, 20);
         }else{
             System.out.println("Il semble n'y avoir aucun gagnant !");
 
-            Bukkit.broadcastMessage("Il semble n'y avoir aucun gagnant, tout le monde est mort !");
-
-            main.setState(GState.FINISH);
-            finish.runTaskTimer(main, 0, 20);
+            Bukkit.broadcastMessage(main.getConfigMessage("no-winner", null));
         }
+
+        finish.runTaskTimer(main, 0, 20);
 
     }
 }

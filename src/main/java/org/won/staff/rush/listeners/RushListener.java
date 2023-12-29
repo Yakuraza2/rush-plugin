@@ -40,7 +40,7 @@ public class RushListener implements Listener {
         if(!(main.isState(GState.WAITING) || main.isState(GState.STARTING)) || main.getPlayers().size() >= cache.slots()){
             main.debug("Le jeu n'est pas en WAITING");
             main.spawnSpectator(player);
-            player.sendMessage(main.prefix() + main.getConfig().getString("messages.spectator-join"));
+            player.sendMessage(main.prefix() + main.getConfig().getString("spectator-join"));
             event.setJoinMessage(null);
             return;
         }
@@ -48,8 +48,7 @@ public class RushListener implements Listener {
         main.spawnPlayer(player);
 
         if(!main.getPlayers().contains(player)) main.getPlayers().add(player);
-        event.setJoinMessage(main.prefix() + main.getConfig().getString("messages.join-message").replaceAll("<player>", player.getName())
-                .replaceAll("<onlines>", main.getPlayers().size() + "").replaceAll("<slots>", cache.slots() + ""));
+        event.setJoinMessage(main.getConfigMessage("join-message", player));
 
     }
 

@@ -12,7 +12,7 @@ import org.won.staff.rush.listeners.cache;
 
 public class AutoStart extends BukkitRunnable {
 
-    private int timer = 20;
+    private static int timer = 0;
     private boolean waiting = false;
     private Rush main;
     public AutoStart(Rush main) {
@@ -24,12 +24,13 @@ public class AutoStart extends BukkitRunnable {
         if(main.getPlayers().size() < cache.slots()){
             if(timer > 5) timer=0;
             if(!main.isState(GState.WAITING)) main.setState(GState.WAITING);
-            if(timer==0) Bukkit.broadcastMessage(ChatColor.GRAY + "Il n'y a pas assez de joueurs !");
+            if(main.getPlayers().size() < 1)return;
+            if(timer==0) Bukkit.broadcastMessage(main.getConfigMessage("slots-not-full", null));
             timer++;
             return;
         }
         if(main.isState(GState.WAITING)) {
-            timer = 10;
+            timer = (int) main.getConfig().get("timers.starting");
             main.setState(GState.STARTING);
         }
 
@@ -37,9 +38,9 @@ public class AutoStart extends BukkitRunnable {
         for(Player joueurs : main.getPlayers()){
             joueurs.setLevel(timer);
         }
-        if(timer>=60 && timer%60==0) Bukkit.broadcastMessage("Le jeu demarre dans " + ChatColor.YELLOW + timer/60 + ChatColor.GOLD+ " minutes !");
+        if(timer>=60 && timer%60==0) Bukkit.broadcastMessage(main.prefix() + "Le jeu demarre dans " + ChatColor.YELLOW + timer/60 + ChatColor.GOLD+ " minutes !");
         else if(timer%5==0 || timer == 3 || timer == 2 || timer == 1){
-            Bukkit.broadcastMessage("Le jeu demarre dans " + ChatColor.YELLOW + timer + ChatColor.GOLD+ " secondes !");
+            Bukkit.broadcastMessage(main.getConfigMessage("countdown", null));
             for(Player joueurs : main.getPlayers()){
                 joueurs.playSound(joueurs.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
             }
@@ -57,7 +58,7 @@ public class AutoStart extends BukkitRunnable {
             char team = 'y';
             for(Player joueurs : main.getPlayers()){
 
-                joueurs.sendMessage("Le jeu demarre !");
+                joueurs.sendMessage(main.getConfigMessage("starting", joueurs));
                 joueurs.playSound(joueurs.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 2);
 
                 if(team == 'y'){
@@ -76,5 +77,9 @@ public class AutoStart extends BukkitRunnable {
         }
 
         timer--;
+    }
+
+    public static int getTime(){
+        return timer;
     }
 }

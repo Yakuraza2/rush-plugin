@@ -65,7 +65,7 @@ public class CommandRush implements CommandExecutor {
         if(args[0].equalsIgnoreCase("setpurple")){
             key = "rush.purple.";
             main.debug("AJOUT PURPLE SPAWN: " + Loc.getX() + "," + Loc.getY() + "," + Loc.getZ());
-            player.sendMessage("Vous venez de définir le spawn de l'équipe violette en: " + Loc.getX() + "," + Loc.getY() + "," + Loc.getZ());
+            player.sendMessage(main.getConfigMessage("admin", player));
             coordinates = true;
         }
 

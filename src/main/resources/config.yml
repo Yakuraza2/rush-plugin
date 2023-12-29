@@ -1,16 +1,35 @@
-# <player> <killer> <time> <slots> <onlines>
+# <player> <killer> <time> <slots> <onlines> <bed> <purple-team> <yellow-team> <team>
 messages:
   prefix: "§6[§eRush§6]"
   join-message: "§e<player> vient de rejoindre le §6Rush §e! <<onlines>/<slots>>"
-  countdown: ""
-  kill-by-player: ""
-  death: ""
-  spectator-join: "Le jeu a déjà démarré !"
+  countdown: "§eLe rush commence dans §6<time> §esecondes !"
+  killed-by-player: "§6<player> §ea été tué par §6<killer> !"
+  death: "§6<player> §ea cassé sa pipe !"
+  spectator-join: "§eLe jeu a déjà démarré !"
+  starting: "§eLe jeu démarre !"
+  bed-destroy: "§eLe lit §6<bed> §ea été détruit par §6<player> §e!"
+  ally-bed-destroy: "§eVous ne pouvez pas détruire votre lit !"
+  winning-broadcast: "§eBravo à l'équipe <team> §equi gagne le Rush !"
+  winning-solo-broadcast: "§eBravo à <player> de l'équipe <team> qui remporte seul ce RUSH !"
+  winners-message: "Vous avez gagné le RUSH !"
+  no-winner: "Il semble n'y avoir aucun gagnant, tout le monde est mort !"
+  slots-not-full: "Il n'y a pas assez de joueur pour commencer la partie !"
+  killer-message: "§eTu viens de tuer §6<player> §e!"
+  last-seconds: "Le serveur va redemarrer..."
+  no-pvp: "§cVous ne pouvez pas taper ce joueur maintenant !"
+  no-break: "§cVous ne pouvez pas casser de block maintenant !"
+
+  yellow-team: "§eJAUNE"
+  purple-team: "§5VIOLETTE"
 
   admin:
-    slots: ""
+    slots: "Nouveau nombre de slots défini à <slots> !"
     lobby: ""
     yellow: ""
     purple: ""
     spectators: ""
     reload: ""
+
+timers:
+  starting: 20
+  finishing: 30
