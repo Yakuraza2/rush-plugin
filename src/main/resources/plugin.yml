@@ -1,0 +1,7 @@
+name: Rush
+version: '${project.version}'
+main: org.won.staff.rush.Rush
+api-version: '1.20'
+commands:
+  rush:
+    permission: rush.admin
