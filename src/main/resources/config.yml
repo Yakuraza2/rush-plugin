@@ -1,0 +1,16 @@
+# <player> <killer> <time> <slots> <onlines>
+messages:
+  prefix: "§6[§eRush§6]"
+  join-message: "§e<player> vient de rejoindre le §6Rush §e! <<onlines>/<slots>>"
+  countdown: ""
+  kill-by-player: ""
+  death: ""
+  spectator-join: "Le jeu a déjà démarré !"
+
+  admin:
+    slots: ""
+    lobby: ""
+    yellow: ""
+    purple: ""
+    spectators: ""
+    reload: ""
