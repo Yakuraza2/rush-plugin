@@ -5,15 +5,13 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.won.staff.rush.listeners.cache;
-
-import java.io.File;
+import org.won.staff.rush.shops.entities;
 
 public class CommandRush implements CommandExecutor {
 
-    private Rush main;
+    private final Rush main;
     public CommandRush(Rush main) {this.main = main;}
 
     @Override
@@ -30,9 +28,6 @@ public class CommandRush implements CommandExecutor {
             main.debug("Invalid Sender");
             return false;
         }
-
-        File file = main.getFile("rush");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         Player player = ((Player) sender).getPlayer();
         Location Loc = player.getLocation();
@@ -58,14 +53,23 @@ public class CommandRush implements CommandExecutor {
         if(args[0].equalsIgnoreCase("setyellow")){
             key = "rush.yellow.";
             main.debug("AJOUT YELLOW SPAWN: " + Loc.getX() + "," + Loc.getY() + "," + Loc.getZ());
-            player.sendMessage("Vous venez de définir le spawn de l'équipe jeune en: " + Loc.getX() + "," + Loc.getY() + "," + Loc.getZ());
+            player.sendMessage(main.getConfigMessage("admin.yellow", player));
             coordinates = true;
         }
 
         if(args[0].equalsIgnoreCase("setpurple")){
             key = "rush.purple.";
             main.debug("AJOUT PURPLE SPAWN: " + Loc.getX() + "," + Loc.getY() + "," + Loc.getZ());
-            player.sendMessage(main.getConfigMessage("admin", player));
+            player.sendMessage(main.getConfigMessage("admin.purple", player));
+            coordinates = true;
+        }
+
+        if(args[0].equalsIgnoreCase("additemspawner")){
+            int i = main.getSpawnersLocs().size();
+            key = "rush.spawners." + i + ".";
+            main.addSpawnerLoc(Loc);
+            main.debug("AJOUT ITEM-SPAWNER SPAWN: " + Loc.getX() + "," + Loc.getY() + "," + Loc.getZ());
+            player.sendMessage(main.getConfigMessage("admin.additemspawner", player));
             coordinates = true;
         }
 
@@ -84,6 +88,11 @@ public class CommandRush implements CommandExecutor {
             if(!(args[1].charAt(0) > 0 && args[1].charAt(0) > 9)) player.sendMessage(ChatColor.RED + "Invalid arguments. Usage: /rush setslots <number>");
             player.sendMessage("setting slots number to: " + args[1]);
             main.setCache("rush.slots", args[1]);
+        }else if(args[0].equalsIgnoreCase("spawnshop")){
+            entities entity = new entities(main);
+
+            entity.spawnCategories(player);
+            player.sendMessage(main.getConfigMessage("admin.shop-creation", player));
         }
 
 

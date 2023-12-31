@@ -11,7 +11,7 @@ public class AutoFinish extends BukkitRunnable {
 
     private static int timer = 0;
 
-    private Rush main;
+    private final Rush main;
     public AutoFinish(Rush main) {
         this.main = main;
     }

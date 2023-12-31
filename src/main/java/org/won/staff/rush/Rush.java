@@ -8,6 +8,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.won.staff.rush.listeners.PlayingListener;
 import org.won.staff.rush.listeners.RushListener;
 import org.won.staff.rush.listeners.cache;
+import org.won.staff.rush.shops.Inventories;
+import org.won.staff.rush.shops.InventoriesListener;
+import org.won.staff.rush.shops.entities;
 import org.won.staff.rush.timers.AutoFinish;
 import org.won.staff.rush.timers.AutoStart;
 
@@ -27,6 +30,8 @@ public class Rush extends JavaPlugin {
     private List<Player> violet = new ArrayList<>();
     private List<Player> jaune = new ArrayList<>();
 
+    private List<Location> itemSpawnersLoc = new ArrayList<>();
+
     private boolean purpleBed = false;
     private boolean yellowBed = false;
 
@@ -44,6 +49,8 @@ public class Rush extends JavaPlugin {
         pm.registerEvents(new RushListener(this), this);
         debug("Lancement du Listener: Playing");
         pm.registerEvents(new PlayingListener(this), this);
+        debug("Lancement du Listener: Inventories");
+        pm.registerEvents(new InventoriesListener(this), this);
         debug("Lancement du Listener: Cache");
         pm.registerEvents(new cache(this), this);
 
@@ -138,6 +145,15 @@ public class Rush extends JavaPlugin {
     }
     public void setYellowBedAlive(boolean value){
         yellowBed = value;
+    }
+
+    public void addSpawnerLoc(Location loc){
+        itemSpawnersLoc.add(loc);
+        debug("Ajout de : " + loc.getX() + " , " + loc.getY() + " , " + loc.getZ() + " aux items-spawners.");
+    }
+
+    public List getSpawnersLocs(){
+        return itemSpawnersLoc;
     }
 
     public void spawnPlayer(Player player){

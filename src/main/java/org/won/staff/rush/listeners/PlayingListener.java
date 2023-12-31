@@ -2,7 +2,6 @@ package org.won.staff.rush.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -23,7 +22,7 @@ public class PlayingListener implements Listener {
 
     private static Rush main;
     public PlayingListener(Rush main) {
-        this.main = main;
+        PlayingListener.main = main;
     }
 
     @EventHandler
@@ -96,6 +95,8 @@ public class PlayingListener implements Listener {
             e.setCancelled(true);
             return;
         }
+
+        if(!(main.isState(GState.PLAYING) && player.hasPermission("rush.admin"))) return;
         if(e.getBlock().getBlockData().getMaterial() == YELLOW_BED){
             if(main.jaune().contains(player)){
                 e.setCancelled(true);
@@ -149,9 +150,9 @@ public class PlayingListener implements Listener {
         }
     }
     public static void eliminatePlayer(Player player){
-        if(main.getPlayers().contains(player)) main.getPlayers().remove(player);
-        if(main.jaune().contains(player)) main.jaune().remove(player);
-        if(main.violet().contains(player)) main.violet().remove(player);
+        main.getPlayers().remove(player);
+        main.jaune().remove(player);
+        main.violet().remove(player);
 
         main.spawnSpectator(player);
 

@@ -47,6 +47,7 @@ public class AutoStart extends BukkitRunnable {
         }
 
         if(timer<=0){
+            itemSpawners spawners = new itemSpawners(main);
 
             main.debug("Passage en PLAYING");
             main.setState(GState.PLAYING);
@@ -54,6 +55,10 @@ public class AutoStart extends BukkitRunnable {
             main.debug("Lits mis sous le statut Alive=true");
             main.setYellowBedAlive(true);
             main.setPurpleBedAlive(true);
+
+            main.debug("Lancement des spawners à items");
+            spawners.runTaskTimer(main,0,20);
+
 
             char team = 'y';
             for(Player joueurs : main.getPlayers()){
