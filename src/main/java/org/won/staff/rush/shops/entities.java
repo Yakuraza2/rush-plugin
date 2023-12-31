@@ -9,9 +9,9 @@ import org.won.staff.rush.Rush;
 
 public class entities {
 
-    private static Rush main;
+    private Rush main;
     public entities(Rush main) {
-        entities.main = main;}
+        this.main = main;}
 
     public void spawnCategories(Player p){
         World world = p.getWorld();

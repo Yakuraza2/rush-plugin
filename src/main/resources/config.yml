@@ -35,12 +35,79 @@ messages:
 timers:
   starting: 20
   finishing: 30
-  bronze: 5
+  bronze: 2
   iron: 10
-  gold: 20
-  diamond: 30
+  gold: 25
+  diamond: 45
 
 shops:
-  categories:
-      gui-name: "§dShop §eRush"
-      entity-name: "§dShop §eRush"
+    gui-name: "§dShop §eRush"
+    entity-name: "§dShop §eRush"
+    size: 9
+    display-names:
+      diamond: "§bDiamant"
+      gold: "§eOr"
+      iron: "§7Fer"
+      bronze: "§6Bronze"
+      price-prefix: "§e➡"
+    categories:
+      cat-0:
+        name: "§aTools"
+        item: "TNT"
+        size: 36
+        slot: 2
+        items:
+          item-0:
+            display-name: "§cTNT"
+            item-id: "TNT"
+            quantity: 1
+            item-slot: 3
+            price: 4
+            price-item: gold
+          item-1:
+            display-name: "§7Pioche en fer"
+            item-id: "IRON_PICKAXE"
+            quantity: 1
+            item-slot: 13
+            price: 4
+            price-item: gold
+          item-2:
+            display-name: "§cHache en diamant"
+            item-id: "DIAMOND_AXE"
+            quantity: 1
+            item-slot: 11
+            price: 4
+            price-item: gold
+      cat-1:
+        name: "§aCombat"
+        item: "NETHERITE_CHESTPLATE"
+        size: 36
+        slot: 4
+        items:
+          item-0:
+            display-name: "§cTNT"
+            item-id: "TNT"
+            quantity: 1
+            item-slot: 3
+            price: 4
+            price-item: gold
+          item-1:
+            display-name: "§7Epee en fer"
+            item-id: "IRON_SWORD"
+            quantity: 1
+            item-slot: 13
+            price: 4
+            price-item: iron
+          item-2:
+            display-name: "§cHache en diamant"
+            item-id: "DIAMOND_AXE"
+            quantity: 1
+            item-slot: 11
+            price: 6
+            price-item: diamond
+      cat-2:
+        name: "§aBuild"
+        item: "OAK_PLANKS"
+        size: 36
+        slot: 6
+        items:
