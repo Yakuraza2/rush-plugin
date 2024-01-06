@@ -2,13 +2,13 @@ package org.won.staff.rush.timers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.won.staff.rush.GState;
 import org.won.staff.rush.Rush;
 import org.won.staff.rush.listeners.cache;
+import org.won.staff.rush.tablist;
 
 public class AutoStart extends BukkitRunnable {
 
@@ -47,7 +47,7 @@ public class AutoStart extends BukkitRunnable {
         }
 
         if(timer<=0){
-            itemSpawners spawners = new itemSpawners(main);
+            PlayingTimer spawners = new PlayingTimer(main);
 
             main.debug("Passage en PLAYING");
             main.setState(GState.PLAYING);
@@ -66,13 +66,18 @@ public class AutoStart extends BukkitRunnable {
                 joueurs.sendMessage(main.getConfigMessage("starting", joueurs));
                 joueurs.playSound(joueurs.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 2);
 
+                tablist tabList = new tablist(main);
+
                 if(team == 'y'){
                     main.debug(joueurs.getName() + " a rejoint l'équipe jaune !");
                     main.jaune().add(joueurs);
-                    team = 'v';
+                    tabList.setplayer(joueurs, team);
+                    team = 'p';
+
                 }else{
                     main.debug(joueurs.getName() + " a rejoint l'équipe violette !");
                     main.violet().add(joueurs);
+                    tabList.setplayer(joueurs, team);
                     team = 'y';
                 }
                 main.debug("Téléportation des joueurs...");

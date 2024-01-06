@@ -9,22 +9,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.won.staff.rush.timers.AutoStart;
 import org.won.staff.rush.GState;
 import org.won.staff.rush.Rush;
+import org.won.staff.rush.zones.zones;
 
 import java.io.File;
 
 public class RushListener implements Listener {
 
     private Rush main;
+
     public RushListener(Rush main) {
         this.main = main;
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event){
+    public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
         File file = main.getFile("rush");
@@ -32,12 +35,12 @@ public class RushListener implements Listener {
         String key = "rush.";
         final ConfigurationSection configSection = config.getConfigurationSection(key);
 
-        if(configSection == null){
+        if (configSection == null) {
             main.debug("Pas de jeu en config !");
             return;
         }
 
-        if(!(main.isState(GState.WAITING) || main.isState(GState.STARTING)) || main.getPlayers().size() >= cache.slots()){
+        if (!(main.isState(GState.WAITING) || main.isState(GState.STARTING)) || main.getPlayers().size() >= cache.slots()) {
             main.debug("Le jeu n'est pas en WAITING");
             main.spawnSpectator(player);
             player.sendMessage(main.prefix() + main.getConfig().getString("spectator-join"));
@@ -47,17 +50,18 @@ public class RushListener implements Listener {
         main.debug("Le jeu est en WAITING");
         main.spawnPlayer(player);
 
-        if(!main.getPlayers().contains(player)) main.getPlayers().add(player);
+        if (!main.getPlayers().contains(player)) main.getPlayers().add(player);
         event.setJoinMessage(main.getConfigMessage("join-message", player));
 
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent event){
+    public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
-        if((main.isState(GState.STARTING) || main.isState(GState.WAITING)) && main.getPlayers().contains(player)) main.getPlayers().remove(player);
-        if( main.isState(GState.PLAYING) && main.getPlayers().contains(player)) PlayingListener.eliminatePlayer(player);
+        if ((main.isState(GState.STARTING) || main.isState(GState.WAITING)) && main.getPlayers().contains(player))
+            main.getPlayers().remove(player);
+        if (main.isState(GState.PLAYING) && main.getPlayers().contains(player)) PlayingListener.eliminatePlayer(player);
     }
 
 }

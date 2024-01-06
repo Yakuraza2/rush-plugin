@@ -73,6 +73,21 @@ public class cache implements Listener {
             }
         }
 
+        for(int i=0; i<64; i++) {
+            String key = "rush.zones." + i + ".";
+            if (config.get(key) != null) {
+                main.debug(key + " exists, adding it !");
+                main.setCache(key+"x1", config.get(key+"x1").toString());
+                main.setCache(key+"z1", config.get(key+"z1").toString());
+                main.setCache(key+"x2", config.get(key+"x2").toString());
+                main.setCache(key+"z2", config.get(key+"z2").toString());
+
+            } else {
+                main.debug(key + " doesn't exist !");
+                break;
+            }
+        }
+
         System.out.println("Chargement du cache terminé !");
     }
 
@@ -113,6 +128,5 @@ public class cache implements Listener {
         main.setCache(key+"z", config.get(key+"z").toString());
         main.setCache(key+"yaw", config.get(key+"yaw").toString());
         main.setCache(key+"pitch", config.get(key+"pitch").toString());
-        main.debug("CACHE PURPLE chargé !");
     }
 }

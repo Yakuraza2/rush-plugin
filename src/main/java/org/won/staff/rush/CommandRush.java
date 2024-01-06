@@ -80,6 +80,50 @@ public class CommandRush implements CommandExecutor {
             main.setCache(key+"yaw", "" + Loc.getYaw());
             main.setCache(key+"pitch", "" + Loc.getPitch());
         }
+
+        if(args[0].equalsIgnoreCase("addzone")){
+            if(args.length<5){
+                player.sendMessage("Erreur: il faut 4 arguments: x1 z1 x2 z2");
+                return false;
+            }
+            int i = main.getZoneLoc().size()/4;
+            key = "rush.zones." + i + ".";
+
+            int x1;
+            int x2;
+            int z1;
+            int z2;
+
+            if (Integer.parseInt(args[1]) < Integer.parseInt(args[3])){
+                x1 = Integer.parseInt(args[1]);
+                x2 = Integer.parseInt(args[3]);
+            }else{
+                x2 = Integer.parseInt(args[1]);
+                x1 = Integer.parseInt(args[3]);
+            }
+
+            if (Integer.parseInt(args[2]) < Integer.parseInt(args[4])){
+                z1 = Integer.parseInt(args[2]);
+                z2 = Integer.parseInt(args[4]);
+            }else{
+                z2 = Integer.parseInt(args[2]);
+                z1 = Integer.parseInt(args[4]);
+            }
+
+            main.getZoneLoc().put(key+"x1",x1);
+            main.getZoneLoc().put(key+"z1",z1);
+            main.getZoneLoc().put(key+"x2",x2);
+            main.getZoneLoc().put(key+"z2",z2);
+
+            main.setCache(key+"x1",x1 + "");
+            main.setCache(key+"z1",z1 + "");
+            main.setCache(key+"x2",x2 + "");
+            main.setCache(key+"z2",z2 + "");
+
+            player.sendMessage("Zone add");
+
+        }
+
         else if(args[0].equalsIgnoreCase("reload")){
             player.sendMessage("Loading the config...");
             cache.load();

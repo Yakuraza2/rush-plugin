@@ -10,6 +10,7 @@ import org.won.staff.rush.listeners.RushListener;
 import org.won.staff.rush.listeners.cache;
 import org.won.staff.rush.shops.Inventories;
 import org.won.staff.rush.shops.InventoriesListener;
+import org.won.staff.rush.shops.ItemStacks;
 import org.won.staff.rush.shops.entities;
 import org.won.staff.rush.timers.AutoFinish;
 import org.won.staff.rush.timers.AutoStart;
@@ -31,6 +32,7 @@ public class Rush extends JavaPlugin {
     private List<Player> jaune = new ArrayList<>();
 
     private List<Location> itemSpawnersLoc = new ArrayList<>();
+    private HashMap<String, Integer> zonesLoc = new HashMap<>();
 
     private boolean purpleBed = false;
     private boolean yellowBed = false;
@@ -164,6 +166,9 @@ public class Rush extends JavaPlugin {
         player.setFoodLevel(20);
         player.getInventory().clear();
 
+        tablist tabList = new tablist(this);
+        tabList.present(player);
+
         if(isState(GState.PLAYING)){
 
             if(jaune.contains(player)){
@@ -173,7 +178,12 @@ public class Rush extends JavaPlugin {
             else if(violet.contains(player)){
                 player.teleport(spawnPoint("rush.purple."));
                 debug("Spawn de " + player.getName() + "dans l'équipe VIOLETTE");
-            }else spawnSpectator(player);
+            }else {
+                spawnSpectator(player);
+                return;
+            }
+            ItemStacks itemStacks = new ItemStacks(this);
+            itemStacks.giveSpawnKit(player);
         } else if(isState(GState.FINISH)){
             spawnSpectator(player);
         }else{
@@ -186,6 +196,10 @@ public class Rush extends JavaPlugin {
     public void spawnSpectator(Player player){
         debug(player.getName() + "a spawn en spectator");
         player.setGameMode(GameMode.SPECTATOR);
+
+        tablist tabList = new tablist(this);
+        tabList.setplayer(player, 's');
+
         player.teleport(spawnPoint("rush.spect."));
         debug("PLAYER TELEPORTED SPECTATOR");
     }
@@ -207,4 +221,5 @@ public class Rush extends JavaPlugin {
         message = message.replaceAll("<onlines>", getPlayers().size() + "");
         return message;
     }
+    public HashMap getZoneLoc() { return zonesLoc;}
 }

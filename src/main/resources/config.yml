@@ -1,4 +1,4 @@
-# <player> <killer> <time> <slots> <onlines> <bed> <purple-team> <yellow-team> <team>
+# <player> <killer> <time> <slots> <onlines> <bed> <purple-team> <yellow-team> <team> <item>
 messages:
   prefix: "§6[§eRush§6]"
   join-message: "§e<player> vient de rejoindre le §6Rush §e! <<onlines>/<slots>>"
@@ -18,6 +18,7 @@ messages:
   last-seconds: "Le serveur va redemarrer..."
   no-pvp: "§cVous ne pouvez pas taper ce joueur maintenant !"
   no-break: "§cVous ne pouvez pas casser de block maintenant !"
+  item-buy: "§eVous venez d'acheter : <item>"
 
   yellow-team: "§eJAUNE"
   purple-team: "§5VIOLETTE"
@@ -32,13 +33,22 @@ messages:
     additemspawner: ""
     shop-creation: "Vous venez de créer un shop !"
 
+  errors:
+    buy: "§cUne erreur est survenue lors du retrait de vos <item>s, veulliez contacter un Staff !"
+
 timers:
   starting: 20
   finishing: 30
+  player-zone-verif: 1
   bronze: 2
   iron: 10
   gold: 25
   diamond: 45
+
+gui:
+  display-names:
+    yellow: "§6[§eJaune§6] §b"
+    purple: "§1[§5Violet§1] §b"
 
 shops:
     gui-name: "§dShop §eRush"
