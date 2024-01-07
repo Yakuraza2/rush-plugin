@@ -1,4 +1,4 @@
-package org.won.staff.rush.shops;
+package org.won.staff.rush.showing.shops;
 
 import org.bukkit.Color;
 import org.bukkit.Material;

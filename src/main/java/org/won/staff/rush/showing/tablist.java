@@ -1,7 +1,8 @@
-package org.won.staff.rush;
+package org.won.staff.rush.showing;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.won.staff.rush.Rush;
 
 public class tablist {
 

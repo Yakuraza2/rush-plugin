@@ -8,7 +8,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.won.staff.rush.GState;
 import org.won.staff.rush.Rush;
 import org.won.staff.rush.listeners.PlayingListener;
-import org.won.staff.rush.shops.ItemStacks;
+import org.won.staff.rush.showing.shops.ItemStacks;
 import org.won.staff.rush.zones.zones;
 
 import java.util.HashMap;

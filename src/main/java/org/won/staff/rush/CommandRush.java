@@ -7,7 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.won.staff.rush.listeners.cache;
-import org.won.staff.rush.shops.entities;
+import org.won.staff.rush.showing.shops.entities;
 
 public class CommandRush implements CommandExecutor {
 

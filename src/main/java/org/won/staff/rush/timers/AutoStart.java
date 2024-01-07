@@ -7,8 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.won.staff.rush.GState;
 import org.won.staff.rush.Rush;
+import org.won.staff.rush.listeners.PlayingListener;
 import org.won.staff.rush.listeners.cache;
-import org.won.staff.rush.tablist;
+import org.won.staff.rush.showing.tablist;
 
 public class AutoStart extends BukkitRunnable {
 
@@ -81,7 +82,7 @@ public class AutoStart extends BukkitRunnable {
                     team = 'y';
                 }
                 main.debug("Téléportation des joueurs...");
-                main.spawnPlayer(joueurs);
+                PlayingListener.spawnPlayer(joueurs);
             }
             cancel();
         }

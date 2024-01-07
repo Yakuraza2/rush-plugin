@@ -1,6 +1,5 @@
 package org.won.staff.rush;
 
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -8,10 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.won.staff.rush.listeners.PlayingListener;
 import org.won.staff.rush.listeners.RushListener;
 import org.won.staff.rush.listeners.cache;
-import org.won.staff.rush.shops.Inventories;
-import org.won.staff.rush.shops.InventoriesListener;
-import org.won.staff.rush.shops.ItemStacks;
-import org.won.staff.rush.shops.entities;
+import org.won.staff.rush.showing.shops.InventoriesListener;
 import org.won.staff.rush.timers.AutoFinish;
 import org.won.staff.rush.timers.AutoStart;
 
@@ -127,10 +123,10 @@ public class Rush extends JavaPlugin {
         return lobby;
     }
 
-    public List jaune(){
+    public List<Player> jaune(){
         return jaune;
     }
-    public List violet(){
+    public List<Player> violet(){
         return violet;
     }
 
@@ -156,52 +152,6 @@ public class Rush extends JavaPlugin {
 
     public List getSpawnersLocs(){
         return itemSpawnersLoc;
-    }
-
-    public void spawnPlayer(Player player){
-        if(player.getGameMode() != GameMode.SURVIVAL) player.setGameMode(GameMode.SURVIVAL);
-
-        debug("Spawn de " + player.getName() + "...");
-        player.setHealth(20);
-        player.setFoodLevel(20);
-        player.getInventory().clear();
-
-        tablist tabList = new tablist(this);
-        tabList.present(player);
-
-        if(isState(GState.PLAYING)){
-
-            if(jaune.contains(player)){
-                player.teleport(spawnPoint("rush.yellow."));
-                debug("Spawn de " + player.getName() + "dans l'équipe JAUNE");
-            }
-            else if(violet.contains(player)){
-                player.teleport(spawnPoint("rush.purple."));
-                debug("Spawn de " + player.getName() + "dans l'équipe VIOLETTE");
-            }else {
-                spawnSpectator(player);
-                return;
-            }
-            ItemStacks itemStacks = new ItemStacks(this);
-            itemStacks.giveSpawnKit(player);
-        } else if(isState(GState.FINISH)){
-            spawnSpectator(player);
-        }else{
-            player.teleport(spawnPoint("rush.lobby."));
-            debug("PLAYER TELEPORTED LOBBY");
-        }
-
-    }
-
-    public void spawnSpectator(Player player){
-        debug(player.getName() + "a spawn en spectator");
-        player.setGameMode(GameMode.SPECTATOR);
-
-        tablist tabList = new tablist(this);
-        tabList.setplayer(player, 's');
-
-        player.teleport(spawnPoint("rush.spect."));
-        debug("PLAYER TELEPORTED SPECTATOR");
     }
 
     public String prefix(){

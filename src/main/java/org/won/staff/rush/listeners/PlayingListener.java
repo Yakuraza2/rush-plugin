@@ -2,6 +2,7 @@ package org.won.staff.rush.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -11,12 +12,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.won.staff.rush.zones.effects;
+import org.won.staff.rush.showing.shops.ItemStacks;
+import org.won.staff.rush.showing.tablist;
 import org.won.staff.rush.timers.AutoFinish;
 import org.won.staff.rush.GState;
 import org.won.staff.rush.Rush;
-
-import static org.bukkit.Material.PURPLE_BED;
-import static org.bukkit.Material.YELLOW_BED;
 
 public class PlayingListener implements Listener {
 
@@ -86,52 +87,93 @@ public class PlayingListener implements Listener {
 
     }
 
-    @EventHandler
-    public void onBreak(BlockBreakEvent e){
-        Player player = e.getPlayer();
+    public static void spawnPlayer(Player player){
+        if(player.getGameMode() != GameMode.SURVIVAL) player.setGameMode(GameMode.SURVIVAL);
 
-        if(!(main.isState(GState.PLAYING) && main.getPlayers().contains(player)) && !player.hasPermission("rush.admin")) {
-            player.sendMessage(main.getConfigMessage("no-break", player));
-            e.setCancelled(true);
-            return;
+        main.debug("Spawn de " + player.getName() + "...");
+        player.setHealth(20);
+        player.setFoodLevel(20);
+        player.getInventory().clear();
+
+        tablist tabList = new tablist(main);
+        //tabList.present(player);
+
+        if(main.isState(GState.PLAYING)){
+            effects ef = new effects(main);
+            ef.putHealBoost();
+
+            if(main.jaune().contains(player)){
+                player.teleport(main.spawnPoint("rush.yellow."));
+                main.debug("Spawn de " + player.getName() + "dans l'équipe JAUNE");
+            }
+            else if(main.violet().contains(player)){
+                player.teleport(main.spawnPoint("rush.purple."));
+                main.debug("Spawn de " + player.getName() + "dans l'équipe VIOLETTE");
+            }else {
+                spawnSpectator(player);
+                return;
+            }
+            ItemStacks itemStacks = new ItemStacks(main);
+            itemStacks.giveSpawnKit(player);
+        } else if(main.isState(GState.FINISH)){
+            spawnSpectator(player);
+        }else{
+            player.teleport(main.spawnPoint("rush.lobby."));
+            main.debug("PLAYER TELEPORTED LOBBY");
         }
 
-        if(!(main.isState(GState.PLAYING) && player.hasPermission("rush.admin"))) return;
-        if(e.getBlock().getBlockData().getMaterial() == YELLOW_BED){
-            if(main.jaune().contains(player)){
-                e.setCancelled(true);
-                player.sendMessage(main.getConfigMessage("ally-bed-destroy", player));
-                return;
-            }else {
-                main.setYellowBedAlive(false);
-                main.debug(player.getName() + " a détruit le lit JAUNE");
-                Bukkit.broadcastMessage(main.getConfigMessage("bed-destroy", player).replaceAll("<bed>",   ChatColor.YELLOW + "jaune"));
-            }
-        }else if(e.getBlock().getBlockData().getMaterial() == PURPLE_BED){
-            if(main.violet().contains(player)){
-                e.setCancelled(true);
-                player.sendMessage(main.getConfigMessage("ally-bed-destroy", player));
-                return;
-            } else {
-                main.setPurpleBedAlive(false);
-                main.debug(player.getName() + " a détruit le lit VIOLET");
-                Bukkit.broadcastMessage(main.getConfigMessage("bed-destroy", player).replaceAll("<bed>",   ChatColor.LIGHT_PURPLE + "violet"));
-            }
-        }else{return;}
+    }
 
-        for(Player joueurs : main.getPlayers()){
-            joueurs.playSound(player, Sound.BLOCK_NOTE_BLOCK_IMITATE_ENDER_DRAGON, 1, 1);
+    public static void spawnSpectator(Player player){
+        main.debug(player.getName() + "a spawn en spectator");
+        player.setGameMode(GameMode.SPECTATOR);
+
+        tablist tabList = new tablist(main);
+        tabList.setplayer(player, 's');
+
+        player.teleport(main.spawnPoint("rush.spect."));
+        main.debug("PLAYER TELEPORTED SPECTATOR");
+    }
+
+    public static void YellowBedBreak(Player player, BlockBreakEvent e){
+        if(main.jaune().contains(player)){
+            e.setCancelled(true);
+            player.sendMessage(main.getConfigMessage("ally-bed-destroy", player));
+        }else {
+            main.setYellowBedAlive(false);
+            main.debug(player.getName() + " a détruit le lit JAUNE");
+            Bukkit.broadcastMessage(main.getConfigMessage("bed-destroy", player).replaceAll("<bed>",   ChatColor.YELLOW + "jaune"));
         }
     }
 
-    //CREER UN KILLPLAYER -> Si le lit est détruit : eliminer le joueur, sinon, le faire respawn + clear + heal etc.
+    public static void PurpleBedBreak(Player player, BlockBreakEvent e){
+        if(main.violet().contains(player)){
+            e.setCancelled(true);
+            player.sendMessage(main.getConfigMessage("ally-bed-destroy", player));
+        } else {
+            main.setPurpleBedAlive(false);
+            main.debug(player.getName() + " a détruit le lit VIOLET");
+            Bukkit.broadcastMessage(main.getConfigMessage("bed-destroy", player).replaceAll("<bed>",   ChatColor.LIGHT_PURPLE + "violet"));
+        }
+    }
+
+    public static void BrownBedBreak(Player player, BlockBreakEvent e){
+        effects ef = new effects(main);
+
+        if(main.jaune().contains(player)){
+            ef.addHealBoost('y', 1);
+        }else {
+            ef.addHealBoost('p', 1);
+        }
+    }
+
     public static void killPlayer(Player player){
         main.debug("Le joueur " + player.getName() + " est mort.");
 
         if(main.jaune().contains(player)){
             if(main.isYellowBedAlive()){
                 main.debug("L'équipe jaune a encore son lit, " + player.getName() + " peut respawn !");
-                main.spawnPlayer(player);
+                spawnPlayer(player);
             }else{
                 main.debug("L'équipe jaune n'a plus son lit, " + player.getName() + " est éliminé !");
                 eliminatePlayer(player);
@@ -139,14 +181,14 @@ public class PlayingListener implements Listener {
         }else if(main.violet().contains(player)){
             if(main.isPurpleBedAlive()){
                 main.debug("L'équipe violette a encore son lit, " + player.getName() + " peut respawn !");
-                main.spawnPlayer(player);
+                spawnPlayer(player);
             } else {
                 main.debug("L'équipe violette n'a plus son lit, " + player.getName() + " est éliminé !");
                 eliminatePlayer(player);
             }
         }else{
             main.debug(player.getName() + " est dans aucune équipe, il respawn en spectateur !");
-            main.spawnSpectator(player);
+            spawnSpectator(player);
         }
     }
     public static void eliminatePlayer(Player player){
@@ -154,7 +196,7 @@ public class PlayingListener implements Listener {
         main.jaune().remove(player);
         main.violet().remove(player);
 
-        main.spawnSpectator(player);
+        spawnSpectator(player);
 
         checkWin();
     }

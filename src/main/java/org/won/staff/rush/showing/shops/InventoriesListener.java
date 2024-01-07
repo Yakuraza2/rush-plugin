@@ -1,8 +1,7 @@
-package org.won.staff.rush.shops;
+package org.won.staff.rush.showing.shops;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.entity.Player;
@@ -10,11 +9,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ArmorMeta;
 import org.won.staff.rush.GState;
 import org.won.staff.rush.Rush;
-import sun.jvm.hotspot.debugger.cdbg.CDebugger;
 
 public class InventoriesListener implements Listener {
 
